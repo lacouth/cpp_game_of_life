@@ -14,10 +14,10 @@ typedef std::vector<Row> Board;
 
 const std::string ALIVE_SYMBOL = " o ";
 const std::string DEAD_SYMBOL = " _ ";
-const int MIN_NEIGHBORS = 2;
-const int MAX_NEIGHBORS = 3;
+const int MIN_NEIGHBOURS = 2;
+const int MAX_NEIGHBOURS = 3;
 
-const std::vector<std::vector<int>> neighbors{{-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {-1, -1}, {-1, 1}, {1, -1}};
+const std::vector<std::vector<int>> neighbours{{-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {-1, -1}, {-1, 1}, {1, -1}};
 
 Board board_factory(size_t n_rows, size_t n_cols, Cell initial_value = Cell::dead);
 void generates_board_initial_state(Board &board, size_t number_of_cells);
@@ -122,7 +122,7 @@ void update_board(Board &board) {
   for (size_t i = 0; i < board.size(); ++i) {
     for (size_t j = 0; j < board.size(); ++j) {
       count_neighbors = 0;
-      std::for_each(neighbors.begin(), neighbors.end(),
+      std::for_each(neighbours.begin(), neighbours.end(),
                     [&](std::vector<int> neighbor) {
                       pos = check_neighbor_position(
                           neighbor, std::vector<size_t>{i, j}, board.size());
@@ -130,8 +130,8 @@ void update_board(Board &board) {
                         count_neighbors++;
                     });
 
-      if (count_neighbors >= MIN_NEIGHBORS &&
-          count_neighbors <= MAX_NEIGHBORS) {
+      if (count_neighbors >= MIN_NEIGHBOURS &&
+          count_neighbors <= MAX_NEIGHBOURS) {
         temporary_board[i][j] = Cell::alive;
       } else {
         temporary_board[i][j] = Cell::dead;
