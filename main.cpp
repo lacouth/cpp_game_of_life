@@ -55,7 +55,7 @@ std::pair<int, int> check_neighbor_position(const std::vector<int> &coord,
 
   for (int i = 0; i < 2; ++i) {
     new_coords[i] = positions[i] + coord[i];
-    if (new_coords[i] < 0 || new_coords[i] == board_size) {
+    if (new_coords[i] < 0 || new_coords[i] >= board_size) {
       new_coords[i] = new_coords[i] < 0 ? 0 : board_size - 1;
     }
   }
@@ -78,23 +78,48 @@ void update_board(Board &board) {
                       if (board[pos.first][pos.second] == Cell::alive)
                         count_neighbors++;
                     });
-      temporary_board[i][j] = (count_neighbors >= MIN_NEIGHBORS && count_neighbors <= MAX_NEIGHBORS) ? Cell::alive : Cell::dead;
+
+      if (count_neighbors >= MIN_NEIGHBORS &&
+          count_neighbors <= MAX_NEIGHBORS) {
+        temporary_board[i][j] = Cell::alive;
+      } else {
+        temporary_board[i][j] = Cell::dead;
+      }
     }
   }
   board = std::move(temporary_board);
 }
 
+bool is_everybody_dead(const Board &board) {
+  bool flag = true;
+  std::for_each(board.begin(), board.end(), [&](const Row &row) {
+    std::for_each(row.begin(), row.end(), [&](const Cell cell) {
+      if (cell == Cell::alive)
+        flag = false;
+    });
+  });
+  return flag;
+}
+
 int main() {
 
-  size_t board_width = 70;
-  uint number_initial_live_cells = 20;
+  size_t board_width = 50;
+  uint number_initial_live_cells = 10;
+  size_t generations = 0;
+  size_t max_generations = 100;
 
   Board board = board_factory(board_width, board_width);
 
   generates_board_initial_state(board, number_initial_live_cells);
-  while (true) {
+  while (!is_everybody_dead(board) && generations < max_generations) {
     print_board(board);
     update_board(board);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    generations++;
   }
+  print_board(board);
+  if (generations < max_generations)
+    std::cout << "GAME OVER - No Cells Alive\n";
+
+  std::cout << generations << " generations\n";
 }
