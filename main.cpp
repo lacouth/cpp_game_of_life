@@ -142,12 +142,10 @@ void update_board(Board &board) {
 }
 
 bool is_everybody_dead(const Board &board) {
-  bool flag = true;
-  std::for_each(board.begin(), board.end(), [&](const Row &row) {
-    std::for_each(row.begin(), row.end(), [&](const Cell cell) {
-      if (cell == Cell::alive)
-        flag = false;
-    });
-  });
-  return flag;
+  for(const Row &row : board){
+      for(const Cell &cell : row){
+          if(cell == Cell::alive) return false;
+      }
+  }
+  return true;
 }
