@@ -2,31 +2,34 @@
  * This file is part of a C++ Generative Art Project.
  *
  *
- * Developed by Patric Lacouth; 
+ * Developed by Patric Lacouth;
  *
- * This file implements Conway's Game of Life using C++  leveraging the STL's power. 
- * The game can only be used in the terminal, which imposes a restricted world size 
- * depending on the user environment.
- * 
- * The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, 
- * each of which is in one of two possible states, live or dead, (or populated and unpopulated, respectively). 
- * Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. 
- * At each step in time, the following transitions occur:
+ * This file implements Conway's Game of Life using C++  leveraging the STL's
+ * power. The game can only be used in the terminal, which imposes a restricted
+ * world size depending on the user environment.
  *
- *   Any live cell with fewer than two live neighbours dies, as if by underpopulation.
- *   Any live cell with two or three live neighbours lives on to the next generation.
- *   Any live cell with more than three live neighbours dies, as if by overpopulation.
- *   Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
- * 
+ * The universe of the Game of Life is an infinite, two-dimensional orthogonal
+ * grid of square cells, each of which is in one of two possible states, live or
+ * dead, (or populated and unpopulated, respectively). Every cell interacts with
+ * its eight neighbours, which are the cells that are horizontally, vertically,
+ * or diagonally adjacent. At each step in time, the following transitions
+ * occur:
+ *
+ *   Any live cell with fewer than two live neighbours dies, as if by
+ * underpopulation. Any live cell with two or three live neighbours lives on to
+ * the next generation. Any live cell with more than three live neighbours dies,
+ * as if by overpopulation. Any dead cell with exactly three live neighbours
+ * becomes a live cell, as if by reproduction.
+ *
  * @see https://en.wikipedia.org/wiki/Conway's_Game_of_Life
- * 
+ *
  * Basic build instructions
- * 
+ *
  * compile: g++ main.cpp -std=c++17 -o main
  * run it: ./main
- * 
+ *
  * Usage
- * 
+ *
  * Once build the binary can be used standalone or with some specific flags:
  *  -s sets the size of the board.
  *      ./main -s 50 //for a board with 50x50 cells
@@ -45,11 +48,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details. To know more about GNU GPL,
  * see <https://www.gnu.org/licenses/>.
- * 
- * You can see further developments accessing: 
+ *
+ * You can see further developments accessing:
  * @see github.com/lacouth/cpp_game_of_life
  */
-
 
 #include <algorithm>
 #include <chrono>
@@ -62,14 +64,15 @@
 
 /**
  * Possible cell's states in the game.
- * These values are used to impose the only two states a cell can assume during the game. 
+ * These values are used to impose the only two states a cell can assume during
+ * the game.
  */
 enum class Cell { dead, alive };
 
 // Type definition of the Row being a std::vector of Cells
 typedef std::vector<Cell> Row;
 
-//Type definition of the Board being a std::vector of Rows
+// Type definition of the Board being a std::vector of Rows
 typedef std::vector<Row> Board;
 
 const std::string ALIVE_SYMBOL = " o "; ///< Symbol used in terminal to represents a live cell
@@ -77,63 +80,67 @@ const std::string DEAD_SYMBOL = " _ "; ///<  Symbol used in terminal to represen
 const int MIN_NEIGHBOURS = 2; ///< Game constant to define underpopulation
 const int MAX_NEIGHBOURS = 3; ///< Game constant to define overpopuplation
 
-
 /**
  * Creates a square board to the game of life
- * 
+ *
  * @param size size_t whose value is used to create a square board.
- * @param initial_value Cell indicates the initial state of all cells in the board, 
- *                      the default value is set to Cell::dead
- * @return a new Board with the configurations established by the parameters above.
+ * @param initial_value Cell indicates the initial state of all cells in the
+ * board, the default value is set to Cell::dead
+ * @return a new Board with the configurations established by the parameters
+ * above.
  */
- 
+
 Board board_factory(size_t size, Cell initial_value = Cell::dead);
 
 /**
  * Populates the board with living cells
  * @param board Board passsed by reference to be populated.
- * @param number_of_cells size_t defines the number of random generated positions should be set as Cell::alive.
+ * @param number_of_cells size_t defines the number of random generated
+ * positions should be set as Cell::alive.
  */
 
 void generates_board_initial_state(Board &board, size_t number_of_cells);
 
 /**
  * Prints the Board on the standard output
- * 
+ *
  * Uses the ALIVE_SYMBOL and the DEAD_SYMBOL to represents the cells state.
- * 
+ *
  * @param board Board passed as const reference to be printed
  */
-
 
 void print_board(const Board &board);
 
 /**
  * Updates a board using the three rules of Conway's Game of Life.
- * 
+ *
  * @param board Board passed by referece to be updated.
  */
 void update_board(Board &board);
 
 /**
  * Gets a valid position of the neighbour of a cell
- * 
+ *
  * @param coord const Container with the Board indexes of a cell.
- * @param positions const Container with the directions of the neighbour to be calculated.
+ * @param positions const Container with the directions of the neighbour to be
+ * calculated.
  * @param board_size size_t with the size of the Board.
- * @return std::pair<int,int> with the indexes of the neighbour in the given direction.
-*/
+ * @return std::pair<int,int> with the indexes of the neighbour in the given
+ * direction.
+ */
 std::pair<int, int> neighbour_position(const std::vector<int> &coord,
-                                            const std::vector<size_t> positions,
-                                            size_t board_size);
+                                       const std::vector<size_t> positions,
+                                       size_t board_size);
 
 /**
  * Runs through a Board looking for a living cell
- * 
+ *
  * @param board Board passed as a const reference
- * @return bool return true if all cells are marked as dead, false if there is at least one cell alive.
- * @note if the cell is on the edge of the board the neighbours will be set as the cells in the on the 
- *       other side of the board, creating the illusion of a round board.
+ * @return bool return true if all cells are marked as dead, false if there is
+ * at least one cell alive.
+ * @note if the cell is on the edge of the board the neighbours will be set as
+ * the cells in the on the other side of the board, creating the illusion of a
+ * round board.
  */
 
 bool is_everybody_dead(const Board &board);
@@ -210,8 +217,8 @@ void print_board(const Board &board) {
 }
 
 std::pair<int, int> neighbour_position(const std::vector<int> &coord,
-                                            const std::vector<size_t> positions,
-                                            size_t board_size) {
+                                       const std::vector<size_t> positions,
+                                       size_t board_size) {
 
   int new_coords[2];
 
@@ -226,7 +233,8 @@ std::pair<int, int> neighbour_position(const std::vector<int> &coord,
 }
 
 void update_board(Board &board) {
-  const std::vector<std::vector<int>> neighbourhood{{-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {-1, -1}, {-1, 1}, {1, -1}};
+  const std::vector<std::vector<int>> neighbourhood{
+      {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {-1, -1}, {-1, 1}, {1, -1}};
   Board temp_board = board_factory(board.size());
   uint count_neighbors;
   std::pair<int, int> pos;
@@ -242,13 +250,17 @@ void update_board(Board &board) {
                         count_neighbors++;
                     });
 
-      if(board[i][j] == Cell::alive && count_neighbors < MIN_NEIGHBOURS){
+      if (board[i][j] == Cell::alive && count_neighbors < MIN_NEIGHBOURS) {
         temp_board[i][j] = Cell::dead;
-      }else if(board[i][j] == Cell::alive && count_neighbors >= MIN_NEIGHBOURS and count_neighbors <= MAX_NEIGHBOURS){
+      } else if (board[i][j] == Cell::alive &&
+                 count_neighbors >= MIN_NEIGHBOURS and
+                 count_neighbors <= MAX_NEIGHBOURS) {
         temp_board[i][j] = Cell::alive;
-      }else if(board[i][j] == Cell::alive && count_neighbors > MAX_NEIGHBOURS){
+      } else if (board[i][j] == Cell::alive &&
+                 count_neighbors > MAX_NEIGHBOURS) {
         temp_board[i][j] = Cell::dead;
-      }else if(board[i][j] == Cell::dead && count_neighbors == MAX_NEIGHBOURS){
+      } else if (board[i][j] == Cell::dead &&
+                 count_neighbors == MAX_NEIGHBOURS) {
         temp_board[i][j] = Cell::alive;
       }
     }
@@ -257,10 +269,11 @@ void update_board(Board &board) {
 }
 
 bool is_everybody_dead(const Board &board) {
-  for(const Row &row : board){
-      for(const Cell &cell : row){
-          if(cell == Cell::alive) return false;
-      }
+  for (const Row &row : board) {
+    for (const Cell &cell : row) {
+      if (cell == Cell::alive)
+        return false;
+    }
   }
   return true;
 }
