@@ -17,7 +17,7 @@ const std::string DEAD_SYMBOL = " _ ";
 const int MIN_NEIGHBOURS = 2;
 const int MAX_NEIGHBOURS = 3;
 
-const std::vector<std::vector<int>> neighbours{{-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {-1, -1}, {-1, 1}, {1, -1}};
+
 
 Board board_factory(size_t n_rows, size_t n_cols, Cell initial_value = Cell::dead);
 void generates_board_initial_state(Board &board, size_t number_of_cells);
@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 
 /*
 
-    Utility Functions
+    Functions Implementation
 
 */
 
@@ -115,6 +115,7 @@ std::pair<int, int> check_neighbor_position(const std::vector<int> &coord,
 }
 
 void update_board(Board &board) {
+  const std::vector<std::vector<int>> neighbourhood{{-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {-1, -1}, {-1, 1}, {1, -1}};
   Board temporary_board = board_factory(board.size(), board.size());
   uint count_neighbors;
   std::pair<int, int> pos;
@@ -122,7 +123,7 @@ void update_board(Board &board) {
   for (size_t i = 0; i < board.size(); ++i) {
     for (size_t j = 0; j < board.size(); ++j) {
       count_neighbors = 0;
-      std::for_each(neighbours.begin(), neighbours.end(),
+      std::for_each(neighbourhood.begin(), neighbourhood.end(),
                     [&](std::vector<int> neighbor) {
                       pos = check_neighbor_position(
                           neighbor, std::vector<size_t>{i, j}, board.size());
