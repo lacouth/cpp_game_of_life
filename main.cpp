@@ -141,7 +141,7 @@ bool is_everybody_dead(const Board &board);
 int main(int argc, char **argv) {
 
   size_t board_size = 50;
-  uint number_initial_living_cells = 20;
+  uint number_initial_living_cells = 200;
   size_t generations = 0;
   size_t max_generations = 100;
 
@@ -227,7 +227,7 @@ std::pair<int, int> neighbour_position(const std::vector<int> &coord,
 
 void update_board(Board &board) {
   const std::vector<std::vector<int>> neighbourhood{{-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {-1, -1}, {-1, 1}, {1, -1}};
-  Board temporary_board = board_factory(board.size());
+  Board temp_board = board_factory(board.size());
   uint count_neighbors;
   std::pair<int, int> pos;
 
@@ -242,15 +242,18 @@ void update_board(Board &board) {
                         count_neighbors++;
                     });
 
-      if (count_neighbors >= MIN_NEIGHBOURS &&
-          count_neighbors <= MAX_NEIGHBOURS) {
-        temporary_board[i][j] = Cell::alive;
-      } else {
-        temporary_board[i][j] = Cell::dead;
+      if(board[i][j] == Cell::alive && count_neighbors < MIN_NEIGHBOURS){
+        temp_board[i][j] = Cell::dead;
+      }else if(board[i][j] == Cell::alive && count_neighbors >= MIN_NEIGHBOURS and count_neighbors <= MAX_NEIGHBOURS){
+        temp_board[i][j] = Cell::alive;
+      }else if(board[i][j] == Cell::alive && count_neighbors > MAX_NEIGHBOURS){
+        temp_board[i][j] = Cell::dead;
+      }else if(board[i][j] == Cell::dead && count_neighbors == MAX_NEIGHBOURS){
+        temp_board[i][j] = Cell::alive;
       }
     }
   }
-  board = std::move(temporary_board);
+  board = std::move(temp_board);
 }
 
 bool is_everybody_dead(const Board &board) {
